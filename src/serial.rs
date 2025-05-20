@@ -1,18 +1,28 @@
 use memchr::memmem;
 use std::io;
+<<<<<<< HEAD
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::io::AsyncReadExt;
 use tokio::sync::{mpsc, Mutex};
 use tokio::task::JoinHandle;
 use tokio_serial::{SerialPort, SerialPortBuilderExt, SerialStream};
+=======
+use tokio::io::AsyncReadExt;
+use tokio::sync::{mpsc, Mutex};
+use tokio::task::JoinHandle;
+use tokio_serial::{SerialPortBuilderExt, SerialStream};
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
 // use tokio_util::codec::{FramedRead, LinesCodec};
 use tokio_util::{
     bytes::BytesMut,
     codec::{Decoder, Encoder},
 };
 
+<<<<<<< HEAD
 use crate::DATA;
 
+=======
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 struct LineCodec;
 impl LineCodec {
@@ -80,6 +90,10 @@ impl Encoder<String> for LineCodec {
 pub struct Serial {
     shutdown_tx: mpsc::Sender<()>,
     handle: Mutex<Option<JoinHandle<()>>>,
+<<<<<<< HEAD
+=======
+    pub data_rx: mpsc::Receiver<BytesMut>,
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
 }
 impl Serial {
     pub fn new(path: &str, baud_rate: u32, data_bits: u8, stop_bits: u8) -> Self {
@@ -88,11 +102,17 @@ impl Serial {
             println!("{}:{:?}", ele.port_name, ele.port_type);
         }
         let (shutdown_tx, shutdown_rx): (mpsc::Sender<()>, mpsc::Receiver<()>) = mpsc::channel(1);
+<<<<<<< HEAD
+=======
+        let (data_tx, data_rx): (mpsc::Sender<BytesMut>, mpsc::Receiver<BytesMut>) =
+            mpsc::channel(1);
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
         let port = tokio_serial::new(path, baud_rate)
             .data_bits(tokio_serial::DataBits::try_from(data_bits).unwrap())
             .stop_bits(tokio_serial::StopBits::try_from(stop_bits).unwrap())
             .open_native_async()
             .unwrap();
+<<<<<<< HEAD
         let handle = tokio::spawn(Self::read(port, shutdown_rx));
         Self {
             shutdown_tx: shutdown_tx,
@@ -104,11 +124,30 @@ impl Serial {
         // let mut reader = FramedRead::new(port, LineCodec::new());
         port.set_timeout(Duration::from_millis(0)).unwrap();
         let mut buf = [0; 128];
+=======
+        let handle = tokio::spawn(Self::read(port, shutdown_rx, data_tx));
+        Self {
+            shutdown_tx: shutdown_tx,
+            handle: Mutex::new(Some(handle)),
+            data_rx,
+        }
+    }
+    pub async fn read(
+        mut port: SerialStream,
+        mut shutdown_rx: mpsc::Receiver<()>,
+        data_tx: mpsc::Sender<BytesMut>,
+    ) {
+        // let mut reader = LineCodec.framed(port);
+        // let mut reader = FramedRead::new(port, LineCodec::new());
+        let mut buf = [0; 1024];
+
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
         loop {
             tokio::select! {
                 res = port.read(&mut buf) => {
                     match res {
                         Ok(n) => {
+<<<<<<< HEAD
                             let mut b = BytesMut::new();
                             b.extend_from_slice(&buf[..n]);
                             let sys_time = SystemTime::now()
@@ -125,6 +164,12 @@ impl Serial {
                                 })
                                 .collect();
                             DATA.lock().unwrap().push_back(format!("{}--{}",sys_time, content));
+=======
+                            println!("nnnn");
+                            let mut b = BytesMut::new();
+                            b.extend_from_slice(&buf[..n]);
+                            let _ = data_tx.send(b).await;
+>>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
                         },
                         Err(e) => eprintln!("Read error: {}", e),
                     }
