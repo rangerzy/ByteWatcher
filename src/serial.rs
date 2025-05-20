@@ -1,10 +1,12 @@
 use memchr::memmem;
 use std::io;
+
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::io::AsyncReadExt;
 use tokio::sync::{mpsc, Mutex};
 use tokio::task::JoinHandle;
 use tokio_serial::{SerialPort, SerialPortBuilderExt, SerialStream};
+
 // use tokio_util::codec::{FramedRead, LinesCodec};
 use crate::DATA;
 use tokio_util::{
@@ -104,7 +106,8 @@ impl Serial {
     ) {
         // let mut reader = LineCodec.framed(port);
         // let mut reader = FramedRead::new(port, LineCodec::new());
-        let mut buf = [0; 1024];
+        port.set_timeout(Duration::from_millis(0)).unwrap();
+        let mut buf = [0; 128];
         loop {
             tokio::select! {
                 res = port.read(&mut buf) => {
