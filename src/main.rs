@@ -258,6 +258,10 @@ impl eframe::App for ByteWatcherApp {
                             DATA.lock().unwrap().clear();
                         };
                     });
+                    ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                        ui.heading("数据显示")
+                            .on_hover_cursor(egui::CursorIcon::Default);
+                    });
                 });
                 egui::ScrollArea::vertical()
                     .auto_shrink(false)
