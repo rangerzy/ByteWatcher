@@ -5,7 +5,6 @@ extern crate lazy_static; // 显式声明宏导入:ml-citation{ref="1,8" data="c
 
 mod serial;
 use eframe::egui;
-<<<<<<< HEAD
 use eframe::epaint::text::{FontData, FontDefinitions};
 use eframe::epaint::FontFamily;
 use serial::Serial;
@@ -18,19 +17,6 @@ lazy_static! {
     static ref SERIALS: Arc<Mutex<HashMap<String, String>>> = Arc::new(Mutex::new(HashMap::new()));
     static ref DATA: Arc<Mutex<VecDeque<String>>> =
         Arc::new(Mutex::new(VecDeque::with_capacity(2000)));
-=======
-use eframe::epaint::text::{FontData, FontDefinitions, FontInsert, InsertFontFamily};
-use eframe::epaint::FontFamily;
-use egui::Align::Center;
-use egui::{Margin, Widget};
-use serial::Serial;
-use std::any::Any;
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
-
-lazy_static! {
-    static ref SERIALS: Arc<Mutex<HashMap<String, String>>> = Arc::new(Mutex::new(HashMap::new()));
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
 }
 
 #[tokio::main]
@@ -57,7 +43,6 @@ async fn main() -> eframe::Result {
             }),
         ..Default::default()
     };
-<<<<<<< HEAD
 
     tokio::spawn(async {
         let mut interval = time::interval(time::Duration::from_secs(1));
@@ -75,19 +60,6 @@ async fn main() -> eframe::Result {
             }
         }
     });
-=======
-    match tokio_serial::available_ports() {
-        Ok(ports) => {
-            for port in ports {
-                SERIALS
-                    .lock()
-                    .unwrap()
-                    .insert(port.port_name.clone(), port.port_name);
-            }
-        }
-        Err(_) => {}
-    }
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
     eframe::run_native(
         "byte watcher",
         options,
@@ -171,10 +143,7 @@ impl eframe::App for ByteWatcherApp {
         style.override_font_id = Some(egui::FontId::new(16.0, FontFamily::Proportional));
         style.spacing.interact_size = egui::Vec2::new(0.0, 30.0); // 影响标签交互区域
         ctx.set_style(style);
-<<<<<<< HEAD
         ctx.request_repaint();
-=======
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
 
         egui::CentralPanel::default().show(ctx, |ui| {
             // let left_width = ui.available_width() * 0.3;
@@ -195,17 +164,10 @@ impl eframe::App for ByteWatcherApp {
                             ConnectType::UDP => "UDP client",
                             ConnectType::WS => "WS client",
                         };
-<<<<<<< HEAD
                         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                             ui.label("通讯类型");
                         });
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-=======
-                        ui.with_layout(egui::Layout::left_to_right(Center), |ui| {
-                            ui.label("通讯类型");
-                        });
-                        ui.with_layout(egui::Layout::right_to_left(Center), |ui| {
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
                             egui::ComboBox::from_id_salt("")
                                 .selected_text(connect_type)
                                 .show_ui(ui, |ui| {
@@ -290,7 +252,6 @@ impl eframe::App for ByteWatcherApp {
                     });
                 });
             egui::ScrollArea::vertical().show(ui, |ui| {
-<<<<<<< HEAD
                 ui.horizontal(|ui| {
                     ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                         if ui.button("清理").clicked() {
@@ -313,27 +274,6 @@ impl eframe::App for ByteWatcherApp {
                         data.into_iter().for_each(|text| {
                             ui.code(text);
                         });
-=======
-                ui.vertical_centered(|ui| {
-                    ui.heading("数据显示")
-                        .on_hover_cursor(egui::CursorIcon::Default);
-                });
-                egui::ScrollArea::vertical()
-                    .auto_shrink(false)
-                    .show(ui, |ui| {
-                        ui.spacing_mut().item_spacing.y = 5.0;
-                        ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Wrap);
-                        match self.serial.as_mut() {
-                            Some(serial) => {
-                                while let Ok(data) = serial.data_rx.try_recv() {
-                                    // println!("aaaaa");
-                                    // ui.code(format!("len:{}", data.len()));
-                                    ui.code("asaaaaaa");
-                                }
-                            }
-                            None => {}
-                        }
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
                     });
             });
         });
@@ -342,17 +282,10 @@ impl eframe::App for ByteWatcherApp {
 fn gen_serial_config_ui(ui: &mut egui::Ui, bw: &mut ByteWatcherApp) {
     ui.horizontal(|ui| {
         ui.set_width(LABLE_WIDTH);
-<<<<<<< HEAD
         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
             ui.label("串口号");
         });
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-=======
-        ui.with_layout(egui::Layout::left_to_right(Center), |ui| {
-            ui.label("串口号");
-        });
-        ui.with_layout(egui::Layout::right_to_left(Center), |ui| {
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
             egui::ComboBox::from_id_salt("path")
                 .selected_text(bw.serial_connetct_info.path.as_str())
                 .width(100.0)
@@ -365,19 +298,11 @@ fn gen_serial_config_ui(ui: &mut egui::Ui, bw: &mut ByteWatcherApp) {
     });
     ui.horizontal(|ui| {
         ui.set_width(LABLE_WIDTH);
-<<<<<<< HEAD
         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
             ui.label("波特率");
         });
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-=======
-        ui.with_layout(egui::Layout::left_to_right(Center), |ui| {
-            ui.label("波特率");
-        });
-
-        ui.with_layout(egui::Layout::right_to_left(Center), |ui| {
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
             ui.add_sized(
                 [100.0, 20.0],
                 egui::DragValue::new(&mut bw.serial_connetct_info.baud_rate).speed(0),
@@ -387,17 +312,10 @@ fn gen_serial_config_ui(ui: &mut egui::Ui, bw: &mut ByteWatcherApp) {
     });
     ui.horizontal(|ui| {
         ui.set_width(LABLE_WIDTH);
-<<<<<<< HEAD
         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
             ui.label("数据位");
         });
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-=======
-        ui.with_layout(egui::Layout::left_to_right(Center), |ui| {
-            ui.label("数据位");
-        });
-        ui.with_layout(egui::Layout::right_to_left(Center), |ui| {
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
             ui.add_sized(
                 [100.0, 20.0],
                 egui::DragValue::new(&mut bw.serial_connetct_info.data_bits).speed(0),
@@ -407,17 +325,10 @@ fn gen_serial_config_ui(ui: &mut egui::Ui, bw: &mut ByteWatcherApp) {
     });
     ui.horizontal(|ui| {
         ui.set_width(LABLE_WIDTH);
-<<<<<<< HEAD
         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
             ui.label("停止位");
         });
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-=======
-        ui.with_layout(egui::Layout::left_to_right(Center), |ui| {
-            ui.label("停止位");
-        });
-        ui.with_layout(egui::Layout::right_to_left(Center), |ui| {
->>>>>>> 754bfe16868741f7a416931164e360b43a95f04e
             ui.add_sized(
                 [100.0, 20.0],
                 egui::DragValue::new(&mut bw.serial_connetct_info.stop_bits).speed(0),
@@ -456,4 +367,5 @@ fn test_crc() {
     ];
     let sum = bb.iter().fold(0u16, |acc, &x| acc + x as u16);
     println!("sum {}", hex::encode(sum.to_le_bytes()))
+    
 }
