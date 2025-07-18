@@ -27,52 +27,67 @@ Item {
         onTriggered: addPortToModel(new Date().toLocaleString())
     }
     Rectangle {
-        anchors.leftMargin: 10
-        width: parent.width
-        height: parent.height
-        opacity: 1
-        border.color: "#f0f0f0"
-        border.width: 2
-        radius: 2
+        anchors.fill: parent
+        // anchors.margins: 5
+        // border { color: "#f0f0f0"; width: 2 }
+        color: "#0C0C0C"
+        radius: 5
 
         ListView {
             width: parent.width
             height: parent.height
+            id: logView
+            anchors.fill: parent
             clip: true
-            // spacing: 2
-            // 性能优化配置
-            cacheBuffer: height * 2  // 预缓存区域
-            reuseItems: true         // 启用项复用
-            flickDeceleration: 2000  // 平滑滚动
+            spacing: 2
+            cacheBuffer: height * 3
+            reuseItems: true
+            flickDeceleration: contentHeight > 5000 ? 1500 : 800
             model: logModel
-            delegate:Text {
-                text: "["+time+"]" + message
-                wrapMode: Text.Wrap
-                color: "#000000"
-                font.pixelSize: 14
-                maximumLineCount: 5  // 可选限制最大行数
-                elide: Text.ElideRight  // 超出部分显示省略号
+            delegate: Item {
+                width: logView.width
+                height: textItem.implicitHeight + 5
+                Text {
+                    id: textItem
+                    width: parent.width - 20
+                    anchors.centerIn: parent
+                    text: "[" + time + "] " + message
+                    wrapMode: Text.Wrap
+                    // maximumLineCount: 30
+                    // elide: Text.ElideRight
+                    font { pixelSize: 12 }
+                    color: "#CCCCCC"
+                }
             }
-            onCountChanged: positionViewAtEnd()
+
             ScrollBar.vertical: ScrollBar {
-                width: 10
-                active: true
+                minimumSize: 0.1
+                implicitWidth: 15
+                policy: ScrollBar.AlwaysOn
+                // contentItem: Rectangle {
+                //     // implicitWidth: 5
+                //     radius: 6
+                //     color: "#aaa"
+                // }
+            }
+
+            onCountChanged: {
+                Qt.callLater(positionViewAtEnd)
             }
         }
     }
-
-
     Connections {
         target: connet_info
         function onDataChanged(msg) {
+            // console.log("1231231", msg)
             logModel.append({
                 time: Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss.zzz"),
                 message: msg
             });
             // 限制日志数量（性能关键）
-            if(logModel.count > 500) {
-                logModel.clear();
-            }
+            // if(logModel.count > 500) {
+            //     logModel.clear();
+            // }
         }
     }
 

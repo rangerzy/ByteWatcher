@@ -81,7 +81,7 @@ class Worker : public QRunnable {
 
 private:
     serial::Serial *t_connetct_serial;
-    uint8_t buffer[128];
+    uint8_t buffer[3968];
     ConnetInfo *m_connetInfo;
 
 };

@@ -3,5 +3,6 @@
         <file>Main.qml</file>
         <file>ConnectView.qml</file>
         <file>DataView.qml</file>
+        <file>DataTableView.qml</file>
     </qresource>
 </RCC>

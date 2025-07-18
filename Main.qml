@@ -9,7 +9,7 @@ ApplicationWindow {
     visible: true
     title: qsTr("ByteDealer")
     flags: Qt.Window |
-           Qt.WindowStaysOnTopHint |
+           // Qt.WindowStaysOnTopHint |
            Qt.CustomizeWindowHint |
            Qt.WindowTitleHint |
            Qt.WindowMinMaxButtonsHint |
